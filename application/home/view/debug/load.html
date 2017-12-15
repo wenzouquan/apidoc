@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+                {{if $info}}
+                <a href="javascript:void(0);">status:{{$info.http_code}}</a>    <a href="javascript:void(0);">time:{{$info.total_time}} s</a>
+                {{else}}
+                响应面板
+                {{/if}}
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills">
+
+                    <li class="active"><a href="#body-pills" data-toggle="tab" aria-expanded="false">Body</a>
+                    </li>
+
+                    <li class=""><a href="#header-pills" data-toggle="tab" aria-expanded="true">Headers</a>
+                    </li>
+
+                    <li class=""><a href="#cookie-pills" data-toggle="tab" aria-expanded="false">Cookies</a>
+                    </li>
+
+                </ul>
+
+                <!-- Tab panes -->
+
+                <div class="tab-content">
+
+                    <div class="tab-pane fade active in" id="body-pills">
+                        <p>
+                            {{if $body}}
+                        <div class="hidden json-data">{{$body}}</div>
+                        <div class="json-box">{{$body}}</div>
+                        {{else}}
+                        暂无数据
+                        {{/if}}
+                        </p>
+
+                    </div>
+
+                    <div class="tab-pane fade" id="header-pills">
+                        {{if $headers.request}}
+                        <h5>request</h5>
+                        {{foreach $headers.request as $header}}
+                        <p>
+                            {{$header}}
+                        </p>
+                        {{/foreach}}
+                        {{/if}}
+
+                        {{if $headers.response}}
+                        <h5>response</h5>
+                        {{foreach $headers.response as $header}}
+                        <p>
+                            {{$header}}
+                        </p>
+                        {{/foreach}}
+                        {{/if}}
+
+                    </div>
+
+                    <div class="tab-pane fade" id="cookie-pills">
+                        <p>
+                            暂无数据
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
+
+<script src="{{STATIC_URL}}/plugins/jsonFormat/js.js"></script>
+
+<script>
+    $(function () {
+        // 格式化json
+        jsonFormat();
+
+    });
+</script>

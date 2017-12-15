@@ -1,0 +1,186 @@
+{{include_file name='public/header' title='项目管理'}}
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    {{include_file name='public/nav' sidebar='sidebar'}}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">项目管理</h1>
+                <div class="search">
+                    <div class="well">
+                        <form class="form-inline" action="{{url()}}" method="get">
+                            <div class="form-group">
+                                <label>项目名</label>
+                                <input name="search[project]" type="text" class="form-control" placeholder="支持模糊查询" value="{{$search.project}}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>创建人</label>
+                                <input name="search[user]" type="text" class="form-control" placeholder="支持模糊查询" value="{{$search.user}}">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">搜索</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>项目名称</th>
+                                    <th>创建人/创建人账号</th>
+                                    <th>成员数</th>
+                                    <th>模块数</th>
+                                    <th>接口数</th>
+                                    <th>创建时间</th>
+                                    <th>操作面板</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{if $projects}}
+                                {{foreach $projects as $project}}
+                                {{$project_id = $project.id}}
+                                {{$user_id = $project.user_id}}
+                                <tr>
+                                    <td ><a target="_blank" href="{{url("project/{{id_encode($project_id)}}")}}" title="{{$project.title}}">{{$project.title|truncate:12}}</a></td>
+                                    <td >{{_uri('user', $user_id, 'name')}}<br/>{{_uri('user', $user_id, 'email')}}</td>
+                                    <td ><a href="{{url("admin/user")}}?project_id={{$project_id}}">{{\app\project::get_member_num($project_id)}}</a></td>
+                                    <td >{{\app\project::get_module_num($project_id)}}</td>
+                                    <td >{{\app\project::get_api_num($project_id)}}</td>
+                                    <td >{{$project.add_time}}</td>
+                                    <td style="width: 15%">
+                                        <button type="button" class="btn btn-warning btn-xs js_transferProjectBtn" data-id="{{$project_id}}">转让</button>
+                                        <button type="button" class="btn btn-danger btn-xs js_deleteProjectBtn" data-id="{{$project_id}}">删除</button>
+                                        <a class="btn btn-success btn-xs js_viewProjectBtn" target="_blank" href="{{url("project/{{id_encode($project_id)}}")}}">查看</a>
+                                    </td>
+                                </tr>
+                                {{/foreach}}
+                                {{/if}}
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <div class="col-sm-12">
+                {{include_file name='public/page'}}
+            </div>
+
+            <!-- /.col-lg-6 -->
+        </div>
+        <!-- /#page-wrapper -->
+
+        <!-- 删除项目模态框 -->
+        <div class="modal fade" id="js_deleteProjectModal" tabindex="2" role="dialog">
+            <div class="modal-dialog" role="document">
+                <form role="form" action="{{url('project/delete','','','json')}}" method="post">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">确定删除此项目吗？</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-dismissable alert-warning">
+                                <i class="fa fa-fw fa-info-circle"></i>&nbsp;
+                                项目删除后，该项目下所有版本将被立刻删除，不可恢复，请谨慎操作！
+                            </div>
+                            <div class="form-group">
+                                <input name="id" type="hidden" class="form-control">
+                                <input name="password" type="text" class="form-control" placeholder="重要操作，请输入登录密码" datatype="s5-50" nullmsg="请输入登录密码!" errormsg="请输入正确的登录密码!">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-danger js_submit">删除</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </form>
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!-- 转让项目模态框 -->
+        <div class="modal fade" id="js_transferProjectModal" tabindex="-9" role="dialog">
+            <div class="modal-dialog" role="document">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">转让项目</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <iframe id="js_transferProjectIframe" style="min-height: 320px;" src="{{url('project/transfer')}}"></iframe>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary js_submit">提交</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /#wrapper -->
+
+    <hr>
+    <p class="text-center">{{get_config('copyright')}}</p>
+
+    <script>
+        $(function(){
+
+            //删除项目表单合法性验证
+            $("#js_deleteProjectModal form").validateForm();
+
+            //删除项目
+            $('.js_deleteProjectBtn').click(function(event){
+                // 阻止事件冒泡
+                event.stopPropagation();
+
+                var id = $(this).data('id');
+
+                if(id <= 0){
+
+                    alert('请选择要删除的项目!', 1000);
+
+                }
+
+                $('#js_deleteProjectModal input[name=id]').val(id);
+                $('#js_deleteProjectModal').modal('show');
+
+            });
+
+            // 转让项目
+            $(".js_transferProjectBtn").iframeModal({
+                modalItem: '#js_transferProjectModal', //modal元素
+                iframeItem: '#js_transferProjectIframe', //iframe元素
+                submitBtn: '.js_submit',
+            });
+
+        });
+    </script>
+
+    {{include_file name='public/footer'}}

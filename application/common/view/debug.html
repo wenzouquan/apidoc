@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>系统出错了</title>
+    <meta http-equiv="Content-Type" content="text/html; charset="utf-8"/>
+    <style type="text/css">
+        <!--
+        body {
+            background-color: white;
+            color: black;
+            font: 9pt/11pt verdana, arial, sans-serif;
+        }
+
+        #container {
+            margin: 10px;
+        }
+
+        #message {
+            width: 1024px;
+            color: black;
+        }
+
+
+        a:link {
+            font: 9pt/11pt verdana, arial, sans-serif;
+            color: red;
+        }
+
+        a:visited {
+            font: 9pt/11pt verdana, arial, sans-serif;
+            color: #4e4e4e;
+        }
+
+        h1 {
+            color: #FF0000;
+            font: 18pt "Verdana";
+            margin-bottom: 0.5em;
+            margin-left: 5px;;
+        }
+
+        .bg1 {
+            background-color: #FFFFCC;
+        }
+
+        .bg2 {
+            background-color: #EEEEEE;
+        }
+
+        .table {
+            background: #AAAAAA;
+            font: 11pt Menlo, Consolas, "Lucida Console"
+        }
+
+        .info {
+            background: none repeat scroll 0 0 #F3F3F3;
+            border: 0px solid #aaaaaa;
+            border-radius: 10px 10px 10px 10px;
+            color: #000000;
+            font-size: 11pt;
+            line-height: 160%;
+            margin-bottom: 1em;
+            padding: 1em;
+            min-width: 1024px;
+        }
+        .info-title {
+            padding-right: 10px;
+        }
+
+        .help {
+            background: #F3F3F3;
+            border-radius: 10px 10px 10px 10px;
+            font: 12px verdana, arial, sans-serif;
+            text-align: center;
+            line-height: 160%;
+            padding: 1em;
+        }
+
+        .sql {
+            background: none repeat scroll 0 0 #FFFFCC;
+            border: 1px solid #aaaaaa;
+            color: #000000;
+            font: arial, sans-serif;
+            font-size: 9pt;
+            line-height: 160%;
+            margin-top: 1em;
+            padding: 4px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="container">
+    <h1>{{$error.title}}</h1>
+
+    <div class='info'><span class="info-title">错误信息：{{$error.message}}</span></div>
+    {{if $error.sql}}
+    <div class='info'><span class="info-title">错误SQL：{{$error.sql}} </span></div>
+    {{/if}}
+    <div class='info'><span class="info-title">错误位置：{{$error.file}} </span><span class="info-title">错误行数:{{$error.line}}</span></div>
+
+
+    {{if $error.trace}}
+    <div class="info">
+        <p><strong>PHP Trace</strong></p>
+        <table cellpadding="5" cellspacing="1" width="100%" class="table">
+            <tbody>
+            <tr class="bg2">
+                <td>No</td>
+                <td>File</td>
+                <td>Line</td>
+                <td>Function</td>
+            </tr>
+
+            {{foreach $error.trace as $key => $item}}
+            {{if $item.file}}
+
+            <tr class="bg1">
+                <td>{{$key+1}}</td>
+                <td>{{$item.file}}</td>
+                <td>{{$item.line}}</td>
+                <td>{{$item.function}}</td>
+            </tr>
+
+            {{/if}}
+            {{/foreach}}
+
+            </tbody>
+        </table>
+    </div>
+    {{/if}}
+
+</div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+{{include_file name='public/header' title='项目管理'}}
+<style>
+    body {
+        background-color: #ffffff;
+    }
+
+    table a{
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- /.row -->
+    <div class="row">
+
+        <form id="js_addProjectForm" role="form" action="{{url('project/add','','','json')}}" method="post">
+
+            <input type="hidden" class="form-control" name="project[id]" value="{{$project.id}}">
+
+            <div class="form-group">
+                <label for="recipient-name" class="control-label">项目名称:</label>
+                <input type="text" class="form-control" name="project[title]" value="{{$project.title}}" placeholder="必填" datatype="*" nullmsg="请输入项目名称!" errormsg="请输入项目名称!">
+            </div>
+
+            <div class="form-group">
+                <label for="message-text" class="control-label">项目描述:</label>
+                <textarea class="form-control" name="project[intro]" placeholder="必填" datatype="*" nullmsg="请输入项目描述!" errormsg="请输入项目描述!">{{$project.intro}}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="recipient-name" class="control-label">环境域名:</label>
+                <div class="table-responsive table-bordered">
+                    <table class="table">
+                        <tbody>
+                        {{if $envs}}
+                        {{foreach $envs as $env}}
+                        <tr>
+                            <td style="width:20%"><input name="env[name][]" class="form-control" placeholder="必填，标识符" datatype="/[a-z|A-Z|0-9|\-|_|\.]$/" value="{{$env.name}}"></td>
+                            <td style="width:20%"><input name="env[title][]" class="form-control" placeholder="必填，备注" datatype="*" value="{{$env.title}}"></td>
+                            <td style="width:50%"><input name="env[domain][]" class="form-control" placeholder="必填，环境域名，包含协议" datatype="/^(http|https)\:\/\//" value="{{$env.domain}}"></td>
+                            <td style="width:10%">
+                                <a href="javascript:void(0);" class="fa fa-plus js_addEnvBtn" data-title="添加环境" data-project_id="{{$project.id}}"></a>
+                                <a href="javascript:void(0);" class="fa fa-trash-o js_deleteEnvBtn" data-title="删除环境" data-project_id="{{$project.id}}"></a>
+                            </td>
+                        </tr>
+                        {{/foreach}}
+
+                        {{else}}
+                        <tr>
+                            <td style="width:20%"><input name="env[name][]" class="form-control" placeholder="必填，标识符" datatype="/^(\w){1,30}$/" value="product"></td>
+                            <td style="width:20%"><input name="env[title][]" class="form-control" placeholder="必填，备注" datatype="*" value="生产环境"></td>
+                            <td style="width:50%"><input name="env[domain][]" class="form-control" placeholder="必填，环境域名，包含协议" datatype="/^(http|https)\:\/\//" value=""></td>
+                            <td style="width:10%">
+                                <a href="javascript:void(0);" class="fa fa-plus js_addEnvBtn" data-title="添加环境" data-project_id="{{$project.id}}"></a>
+                                <a href="javascript:void(0);" class="fa fa-trash-o js_deleteEnvBtn" data-title="删除环境" data-project_id="{{$project.id}}"></a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="width:20%"><input name="env[name][]" class="form-control" placeholder="必填，标识符" datatype="/^(\w){1,30}$/" value="develop"></td>
+                            <td style="width:20%"><input name="env[title][]" class="form-control" placeholder="必填，备注" datatype="*" value="开发环境"></td>
+                            <td style="width:50%"><input name="env[domain][]" class="form-control" placeholder="必填，环境域名，包含协议" datatype="/^(http|https)\:\/\//" value=""></td>
+                            <td style="width:10%">
+                                <a href="javascript:void(0);" class="fa fa-plus js_addEnvBtn" data-title="新增环境" data-project_id="{{$project.id}}"></a>
+                                <a href="javascript:void(0);" class="fa fa-trash-o js_deleteEnvBtn" data-title="删除环境" data-project_id="{{$project.id}}"></a>
+                            </td>
+                        </tr>
+                        {{/if}}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="recipient-name" class="control-label">是否允许被搜索到:
+                    <a data-toggle="tooltip" data-placement="right" title="如果设为不允许搜索，那么其他人无法通过搜索项目搜索到该项目" class="btn-show-tips">
+                        <i class="fa fa-info-circle"></i>
+                    </a>
+                </label>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="project[allow_search]" {{if !$project || $project.allow_search == 1}}checked{{/if}} value="1"> 允许
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="project[allow_search]" {{if $project && $project.allow_search == 0}}checked{{/if}} value="0"> 禁止
+                    </label>
+                </div>
+
+                <input type="hidden" id="js_submit" value="提交">
+
+            </div>
+
+
+
+        </form>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#wrapper -->
+
+<script>
+
+    $(function(){
+
+        //验证表单
+        var projectModal = $(window.parent.document).find('#js_addRequestFieldModal');
+        $("#js_addProjectForm").validateForm({
+            submitBtn: '#js_submit',
+            before:function () {
+                // iframe父级提交按钮禁用
+                projectModal.find(".js_submit").attr("disabled", "disabled").text('提交中..');
+            },
+            success:function () {
+                parent.location.reload();
+            },
+            error:function () {
+                // iframe父级提交按钮激活
+                projectModal.find(".js_submit").text('重新提交').removeAttr("disabled");
+            }
+        });
+
+        // 新增环境
+        $("body").on('click', '.js_addEnvBtn',function () {
+            var trObj = $(this).closest('tr');
+            trObj.before(trObj.clone(true)).find('input').val('');
+        });
+
+        //删除环境
+        $("body").on('click', '.js_deleteEnvBtn',function () {
+            // 阻止事件冒泡
+            event.stopPropagation();
+
+            if($('.js_deleteEnvBtn').length <= 1){
+                alert('至少要保留一个环境域名', 1000);
+                return false;
+            }
+
+            $(this).closest('tr').remove();
+        });
+
+    });
+
+</script>
+{{include_file name='public/footer'}}

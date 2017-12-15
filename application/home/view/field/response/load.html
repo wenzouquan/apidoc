@@ -1,0 +1,44 @@
+<style>
+    .panel-response .btn {
+        padding: 0;
+    }
+</style>
+<table class="table table-striped table-bordered table-hover">
+    <thead>
+    <tr class="success">
+        <th>字段别名</th>
+        <th>字段含义</th>
+        <th>字段类型</th>
+        <th>MOCK规则</th>
+        <th>备注说明</th>
+        <th>快捷操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    {{foreach $response_fields as $response_field}}
+    <tr class="{{if $response_field.level == 1}}warning{{/if}}">
+
+        <td style="text-align: left;padding-left: 50px;">{{$response_field.delimiter}}{{if $response_field.parent_id}}└{{/if}}{{$response_field.name}}</td>
+        <td>{{$response_field.title}}</td>
+        <td>{{\app\field::get_type_list({{$response_field.type}})}}</td>
+
+        <td>{{$response_field.mock}}</td>
+
+        <td>{{$response_field.intro}}</td>
+
+        <td style="width: 10%">
+
+            <a href="javascript:void(0);" class="btn btn-xs js_addResponseFieldBtn" data-title="编辑响应参数{{$response_field.title}}" data-id="{{$api.id}}-{{$response_field.parent_id}}-{{$response_field.id}}" data-toggle="tooltip" title="编辑响应参数" data-placement="bottom"><i class="fa fa-fw fa-pencil"></i></a>
+
+            <a href="javascript:void(0);" class="btn btn-xs js_deleteFieldBtn" data-title="删除参数" data-id="{{$response_field.id}}" data-toggle="tooltip" title="删除响应参数" data-placement="bottom"><i class="fa fa-fw fa-trash-o"></i></a>
+
+            <a href="javascript:void(0);" class="btn btn-xs js_addResponseFieldBtn" data-title="添加响应子参数" data-id="{{$api.id}}-{{$response_field.id}}-0" data-toggle="tooltip" title="添加子参数" data-placement="bottom" {{if !in_array($response_field.type, ['array', 'object'])}}disabled{{/if}} ><i class="fa fa-fw fa-plus"></i></a>
+
+        </td>
+
+    </tr>
+    {{/foreach}}
+
+    </tbody>
+</table>

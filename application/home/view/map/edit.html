@@ -1,0 +1,225 @@
+<style>
+    table a.fa, input[type="checkbox"], input[type="radio"]{
+        margin: 10px 5px 0;
+    }
+
+</style>
+<form role="form" id="js_addApiForm" action="{{url('api/add')}}" method="post">
+
+    <input name="api[id]" type="hidden" value="{{$api_id}}">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-header">
+                <h1>字典编辑</h1>
+                <div class="opt-btn">
+                    <a class="btn btn-sm btn-info js_submit" href="javascript:void(0);"><i class="fa fa-fw fa-save"></i>保存</a>
+                    <a class="btn btn-sm btn-success js_refresh" href="javascript:void(0);"><i class="fa fa-fw fa-refresh"></i>复原</a>
+                    <a class="btn btn-sm btn-warning" href="javascript:location.reload();"><i class="fa fa-fw fa-reply"></i>取消</a>
+
+                </div>
+            </div>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    {{foreach $maps as $map}}
+    {{$table_name = $map.table_name}}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+
+
+                    <p class="table-name"><strong>{{$map.table_name}}</strong>
+                        <span class="table-comment {{if !$map.table_comment}}hidden{{/if}}">({{$map.table_comment}})</span>
+                        <a href="javascript:void(0);" class="fa fa-fw fa-pencil js_addTableBtn" data-name="{{$map.table_name}}" data-comment="{{$map.table_comment}}" data-toggle="tooltip" title="编辑表名" data-placement="bottom"></a>
+                        <a href="javascript:void(0);" class="fa fa-fw fa-plus js_addTableBtn" data-toggle="tooltip" title="新增数据表" data-placement="bottom"></a>
+                        <a href="javascript:void(0);" class="fa fa-fw fa-trash-o js_deleteTableBtn" data-toggle="tooltip" title="删除数据表" data-placement="bottom"></a>
+                    </p>
+
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="table-responsive">
+
+                        <div class="panel-request">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr class="success">
+                                    <th>字段</th>
+                                    <th>类型</th>
+                                    <th>非空</th>
+                                    <th>主键</th>
+                                    <th>默认值</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{foreach json_decode($map.field_json, true) as $field}}
+                                <tr>
+                                    <td style="width: 15%;">
+                                        <input class="form-control" type="text" value="{{$field.field}}" datatype="*1-50" placeholder="必填">
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <input class="form-control" type="text" value="{{$field.type}}">
+                                    </td>
+                                    <td style="width: 5%;">
+                                        <input class="js_is_null"  {{if !$field.is_null}}checked value="1"{{else}}value="0"{{/if}} type="checkbox">
+                                    </td>
+                                    <td style="width: 5%;">
+                                        <input class="js_is_pk" type="radio" name="{{$table_name}}[is_pk]" value="{{$field.field}}" {{if $field.is_pk}} checked {{/if}}></td>
+                                    <td style="width: 15%;"><input class="form-control" type="text" value="{{$field.default_value}}"></td>
+                                    <td><input class="form-control" type="text" value="{{$field.comment}}"></td>
+                                    <td style="width: 10%">
+                                        <a href="javascript:void(0);" class="fa fa-plus js_addFieldBtn" data-title="新增字段"></a>
+                                        <a href="javascript:void(0);" class="fa fa-trash-o js_deleteFieldBtn" data-title="删除字段"></a>
+                                    </td>
+                                </tr>
+                                {{/foreach}}
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-6 -->
+    </div>
+    {{/foreach}}
+</form>
+
+<!-- 添加、修改数据表模态框 -->
+<div class="modal fade" id="js_addTableModal" tabindex="2" role="dialog">
+    <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">编辑数据表</h4>
+                </div>
+                <form>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">表名:</label>
+                            <input type="text" class="form-control js_table_name" name="table_name" value="" placeholder="必填，表名只能是字母、数字或下划线组合，且首位不能是数字" datatype="*2-50">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">表备注:</label>
+                            <input type="text" class="form-control js_table_comment" name="title" value="" placeholder="必填" datatype="*2-50">
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-info js_submit">确认</button>
+                </div>
+                </form>
+            </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script>
+
+    $(function(){
+
+        // 吐司提示
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // 刷新
+        $(document).delegate('.js_refresh', 'click',function(){
+            var id = "{{$project.id}}";
+            $('#page-wrapper').load("{{url('map/edit')}}", {'id':id});
+        });
+
+        // 是否是主键
+        $(".js_is_pk").on('change', function () {
+            var thisObj = $(this);
+            thisObj.closest('tr').find(".js_is_null").attr('checked', 'checked');
+        });
+
+        // 是否非空
+        $(".js_is_null").on('change', function () {
+            var thisObj = $(this);
+            var pkObj = thisObj.closest('tr').find(".js_is_pk");
+            if(pkObj.attr('checked')){
+//                thisObj.attr('checked', 'checked');
+                alert('主键字段不能为空', 1000);
+            }
+        });
+
+
+
+        // 新增字段
+        $("body").on('click', '.js_addFieldBtn',function () {
+            var trObj = $(this).closest('tr');
+            trObj.before(trObj.clone(true)).find('input').val('');
+        });
+
+        //表单合法性验证
+        $("#js_addApiForm").validateForm();
+
+        //删除字段
+        $(document).delegate('.js_deleteFieldBtn', 'click',function(event){
+            // 阻止事件冒泡
+            event.stopPropagation();
+
+            var thisObj = $(this);
+
+            confirm('确认要删除该字段?', function(){
+
+                thisObj.closest('tr').remove();
+            });
+
+        });
+
+        //添加数据表
+        $('.js_addTableBtn').click(function(event){
+            // 阻止事件冒泡
+            event.stopPropagation();
+
+            var name = $(this).data('name');
+            var comment = $(this).data('comment');
+
+            if(name){
+                var title = '编辑数据表';
+            }else{
+                var title = '新增数据表';
+            }
+
+            $('.js_table_name').val(name);
+            $('.js_table_comment').val(comment);
+
+            $('#js_addTableModal').modal('show').find('.modal-title').text(title);;
+
+        });
+
+        $("#js_addTableModal form").validateForm();
+
+
+        //删除数据表
+        $(document).delegate('.js_deleteTableBtn', 'click',function(event){
+            // 阻止事件冒泡
+            event.stopPropagation();
+
+            var thisObj = $(this);
+
+            confirm('数据表删除后，该表下的字段会一起删除，您确认要删除吗?', function(){
+
+                thisObj.closest('.row').remove();
+            });
+
+        });
+
+    });
+
+</script>

@@ -1,0 +1,96 @@
+{{include_file name='public/header' title='用户登录'}}
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center">用户登录</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" id="js_loginForm" action="{{url('login')}}" method="post">
+                            <fieldset>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="登录邮箱" name="email" type="email"  autocomplete="off" datatype="e" nullmsg="请输入登录邮箱！" errormsg="请输入合法的邮箱地址！">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="登录密码" name="password" type="password" value="" autocomplete="off" datatype="*6-20" nullmsg="请填写登录密码！" errormsg="请填写6-20个字符">
+                                </div>
+                                {{if $login_captcha}}
+                                <div class="form-group">
+                                    <div class="input-group">
+
+                                        <input type="text" name="code" class="form-control" datatype="*" nullmsg="请输入验证码！" placeholder="验证码，不区分大小写">
+
+                                        <a class="input-group-btn verify-code">
+
+                                            <img alt="点击刷新" title="点击刷新" onclick="reloadCode()" src="{{url('login/code')}}">
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+                                {{/if}}
+
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="remember" type="checkbox" checked value="1">记住我
+                                    </label>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <a href="javascript:void(0);" class="btn btn-lg btn-success btn-block js_submit">立即登录</a>
+
+                                <hr>
+
+                                <a href="register.html" class="btn btn-default btn-block">还没有账号？免费注册</a>
+
+                            </fieldset>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <p class="text-center">{{get_config('copyright')}}</p></p>
+    </div>
+
+    <script>
+
+        // 刷新验证码
+        var reloadCode = function() {
+
+            var img = $(".verify-code").find('img');
+
+            var src = img.attr("src").split('?');
+
+            img.attr("src", src[0]+'?random='+new Date().getTime());
+
+        }
+
+        $(function(){
+
+            //验证登录表单
+            $("#js_loginForm").validateForm({
+                success:function () {
+                    window.location.href = "{{url('project/select')}}";
+                },
+                error:function () {
+                    reloadCode();
+                }
+            });
+
+            //enter回车登录
+            $('.js_loginForm').enterSubmit();
+
+        })
+
+    </script>
+
+    {{include_file name='public/footer'}}

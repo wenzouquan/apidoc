@@ -1,0 +1,37 @@
+    {{$notifys = \app\notify::get_notify_list()}}
+    <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+        <i class="fa fa-bell fa-fw"></i><span class="badge js_notifyNum">{{count($notifys)}}</span> <i class="fa fa-caret-down"></i>
+    </a>
+
+    {{if $notifys}}
+    <ul class="dropdown-menu dropdown-alerts">
+        {{foreach $notifys as $notify}}
+        {{$user_id = $notify.user_id}}
+        <li>
+            <div class="notify-item">
+
+                <span class="alert-link">{{$notify.user_name}}</span>
+                {{$notify.type}}
+                <span class="alert-link">{{$notify.message}}</span>
+                <span class="text-muted small">{{pass_time($notify.add_time)}}</span>
+                <span class="pull-right text-muted small">
+                    <a class="js_cleanSingleNotify" title="关闭通知" href="javascript:void(0);" data-id="{{$notify.id}}">
+                        <span class="fa fa-eye-slash fa-fw"></span>
+                    </a>
+                </span>
+
+            </div>
+        </li>
+        <li class="divider"></li>
+        {{/foreach}}
+
+        <li>
+            <div class="text-center">
+
+                <a href="{{url('apply')}}" style="padding: 0"><button type="button" class="btn btn-xs btn-success">查看全部</button></a>
+                <a href="javascript:void(0);" style="padding: 0"><button type="button" class="btn btn-xs btn-warning js_cleanAllNotify">清空全部</button></a>
+            </div>
+        </li>
+    </ul>
+
+    {{/if}}

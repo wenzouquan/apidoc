@@ -1,0 +1,95 @@
+
+{{include_file name='public/header' title='添加header参数'}}
+<style>
+    body {
+        background-color: #ffffff;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- /.row -->
+    <div class="row">
+        <form id="js_addHeaderFieldForm" role="form" action="{{url('field/add')}}" method="post">
+            <input type="hidden" class="form-control" name="field[id]" value="{{$field.id}}">
+            <input type="hidden" class="form-control" name="field[api_id]" value="{{$field.api_id}}">
+            <input type="hidden" class="form-control" name="field[parent_id]" value="0">
+            <input type="hidden" class="form-control" name="field[method]" value="3">
+            <input type="hidden" class="form-control" name="field[title]" value="header头">
+            <input type="hidden" class="form-control" name="field[type]" value="string">
+            <input type="hidden" class="form-control" name="field[is_required]" value="0">
+
+            <div class="form-group">
+                <label>字段键</label>
+                <input class="form-control js_selectHeaderBtn" name="field[name]" value="{{$field.name}}" placeholder="必填" datatype="*">
+            </div>
+
+            <div class="form-group">
+                <label>字段值</label>
+                <input class="form-control" name="field[default_value]" value="{{$field.default_value}}" placeholder="必填" datatype="*">
+            </div>
+
+            <div class="form-group">
+                <label>备注说明</label>
+                <textarea class="form-control" name="field[intro]" rows="2" placeholder="非必填">{{$field.intro}}</textarea>
+            </div>
+
+            <input type="hidden" id="js_submit" value="提交">
+
+        </form>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#wrapper -->
+
+<script src="{{STATIC_URL}}/plugins/bootstrap/js/bootstrap3-typeahead.min.js"></script>
+<script>
+
+    $(function(){
+
+        //选择header
+        var selectMemberBtn = $('.js_selectHeaderBtn');
+        var localArrayData = ['Accept', 'Accept-Charset', 'Accept-Encoding', 'Accept-Language', 'Accept-Ranges', 'Authorization', 'Cache-Control', 'Connection','Cookie','Content-Length','Content-Type','Referer','User-Agent'];
+
+        selectMemberBtn.typeahead({
+            source: localArrayData,
+            items: 8, //显示8条
+            delay: 100, //延迟时间
+
+        });
+
+        //验证表单
+        var headerFieldModal = $(window.parent.document).find('#js_addHeaderFieldModal');
+        $("#js_addHeaderFieldForm").validateForm({
+            submitBtn: '#js_submit',
+            before:function () {
+                // iframe父级提交按钮禁用
+                headerFieldModal.find(".js_submit").attr("disabled", "disabled").text('提交中..');
+            },
+            success:function () {
+
+                // 重新载入header参数列表
+                var apiId = "{{$field.api_id}}";
+                $('#js_addApiForm', parent.document).find(".panel-header").load("{{url('field/load')}}", {'method':3,'api_id':apiId});
+
+                // 关闭父级模态框
+                headerFieldModal.find(".js_close").trigger('click');
+                headerFieldModal.find(".js_submit").text('提交').removeAttr("disabled");
+
+            },
+            error:function () {
+                // iframe父级提交按钮激活
+                headerFieldModal.find(".js_submit").text('重新提交').removeAttr("disabled");
+
+            }
+        });
+
+    });
+
+</script>
+
+{{include_file name='public/footer'}}

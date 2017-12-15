@@ -1,0 +1,70 @@
+{{include_file name='public/header' title='项目管理'}}
+<style>
+    body {
+        background-color: #ffffff;
+    }
+    .container {
+        min-height: 200px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- /.row -->
+    <div class="row">
+        <form id="js_addModuleForm" role="form" action="{{url('module/add','','','json')}}" method="post">
+            <input type="hidden" class="form-control" name="project_id" value="{{$project.id}}">
+            <input type="hidden" class="form-control" name="module_id" value="{{$module.id}}">
+
+            <div class="form-group">
+                <label for="recipient-name" class="control-label">模块名称:</label>
+                <input type="text" class="form-control" name="title" value="{{$module.title}}" placeholder="必填，不大于8位" datatype="*1-8">
+            </div>
+
+            <div class="form-group">
+                <label for="message-text" class="control-label">模块描述:</label>
+                <textarea class="form-control" placeholder="必填" datatype="*1-250" name="intro">{{$module.intro}}</textarea>
+            </div>
+
+            <input type="hidden" id="js_submit" value="提交">
+
+        </form>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#wrapper -->
+
+<script src="{{STATIC_URL}}/plugins/bootstrap/js/bootstrap3-typeahead.min.js"></script>
+
+<script>
+
+    $(function(){
+
+        var moduleModal = $(window.parent.document).find('#js_addModuleModal');
+
+        //验证表单
+        $("#js_addModuleForm").validateForm({
+            submitBtn: '#js_submit',
+            before:function () {
+                // iframe父级提交按钮禁用
+                moduleModal.find(".js_submit").attr("disabled", "disabled").text('提交中..');
+            },
+            success:function () {
+                parent.location.reload();
+            },
+            error:function () {
+                // iframe父级提交按钮激活
+                moduleModal.find(".js_submit").text('重新提交').removeAttr("disabled");
+
+            }
+        });
+
+    });
+
+
+</script>
+
+{{include_file name='public/footer'}}

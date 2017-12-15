@@ -1,0 +1,129 @@
+<link href="{{STATIC_URL}}/plugins/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
+<form role="form" id="js_addApiForm" action="{{url('api/add')}}" method="post">
+
+    <input name="api[id]" type="hidden" value="{{$api_id}}">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-header">
+                <h1>字典编辑</h1>
+                <div class="opt-btn">
+                    <a class="btn btn-sm btn-success js_submit" href="javascript:void(0);"><i class="fa fa-fw fa-save"></i>保存</a>
+                    <a class="btn btn-sm btn-warning" href="javascript:location.reload();"><i class="fa fa-fw fa-reply"></i>取消</a>
+
+                </div>
+            </div>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    {{foreach $maps as $map}}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{$map.table_name}}{{if $map.table_comment}}({{$map.table_comment}}){{/if}}
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="table-responsive">
+
+                        <div class="panel-request">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr class="success">
+                                    <th>字段</th>
+                                    <th>类型</th>
+                                    <th>是否为空</th>
+                                    <th>是否主键</th>
+                                    <th>默认值</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{foreach json_decode($map.field_json, true) as $field}}
+                                <tr>
+                                    <td><a href="javascript:void(0);" class="map-field" data-type="text" data-title="编辑字段">{{$field.field}}</a></td>
+                                    <td><a href="javascript:void(0);" class="map-type" data-type="text" data-title="编辑类型">{{$field.type}}</a></td>
+                                    <td><i class="fa {{if $field.is_null}}fa-check{{else}}fa-times{{/if}}"></i></td>
+                                    <td><i class="fa {{if $field.is_pk}}fa-key{{/if}}"></i></td>
+                                    <td>{{$field.default_value}}</td>
+                                    <td><a href="javascript:void(0);" class="map-type" data-type="text" data-title="编辑备注">{{$field.comment}}</a></td>
+                                    <td style="width: 10%">
+                                        <a href="javascript:void(0);" class="fa fa-trash-o js_deleteFieldBtn" data-title="删除字段"></a>
+                                    </td>
+
+                                </tr>
+                                {{/foreach}}
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default js_addRequestFieldBtn" data-title="添加请求参数" data-id="{{$api.id}}-0"><i class="fa fa-fw fa-plus"></i>添加字段</button>
+                        </div>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-6 -->
+    </div>
+    {{/foreach}}
+</form>
+
+<script src="{{STATIC_URL}}/plugins/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+<script>
+
+    $(function(){
+
+        $('.map-field').on('click', function () {
+            $('.map-field').editable();
+        });
+        $('.map-type').editable();
+
+        //表单合法性验证
+        $("#js_addApiForm").validateForm();
+        
+        //删除字段
+        $(document).delegate('.js_deleteFieldBtn', 'click',function(event){
+            // 阻止事件冒泡
+            event.stopPropagation();
+            var thisObj = $(this);
+
+            var id = $(this).data('id');
+
+            var url = "{{url('field/delete')}}";
+
+            confirm('确认删除该参数?', function(){
+
+                $.post(url, { id:id }, function(json){
+
+                    if(json.code == 200){
+
+                        alert(json.msg, 500, function () {
+                            //移除tr
+                            thisObj.closest('tr').remove();
+                        });
+
+                    }else{
+
+                        alert(json.msg, 2000);
+
+                    }
+
+                }, 'json');
+            });
+
+        });
+
+    });
+
+</script>

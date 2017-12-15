@@ -1,0 +1,24 @@
+<table class="table table-striped table-bordered table-hover">
+    <thead>
+    <tr class="success">
+
+        <th>字段键</th>
+        <th>字段值</th>
+        <th>备注说明</th>
+        <th>快捷操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{foreach $header_fields as $header_field}}
+    <tr class="{{$header_field.class}}">
+        <td style="width: 20%">{{$header_field.name}}</td>
+        <td style="width: 35%">{{$header_field.default_value}}</td>
+        <td style="width: 35%">{{$header_field.intro}}</td>
+        <td style="width: 10%">
+            <a href="javascript:void(0);" class="fa fa-pencil js_addHeaderFieldBtn" data-title="编辑header参数" data-id="{{$api.id}}-{{$header_field.id}}"></a>
+            <a href="javascript:void(0);" class="fa fa-trash-o js_deleteFieldBtn" data-title="删除参数" data-id="{{$header_field.id}}"></a>
+        </td>
+    </tr>
+    {{/foreach}}
+    </tbody>
+</table>

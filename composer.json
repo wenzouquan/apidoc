@@ -1,0 +1,29 @@
+{
+    "name": "gouguoyin/gophp",
+    "description": "The GoPHP Framework.",
+    "keywords": ["php framework", "gophp framework"],
+    "license": "MIT",
+    "type": "project",
+    "authors": [
+      {
+        "name": "gouguoyin",
+        "email": "phper@gouguoyin.cn"
+      }
+    ],
+    "homepage": "http://www.gocmf.com/",
+    "require": {
+        "smarty/smarty": "~3.1"
+    },
+    "autoload": {
+      "psr-4": {
+        "app\\": "application/",
+        "gophp\\": "gophp/library/"
+      }
+    },
+    "repositories": {
+       "packagist": {
+          "type": "composer",
+          "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}

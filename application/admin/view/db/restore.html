@@ -1,0 +1,60 @@
+{{include_file name='public/header' title='项目管理'}}
+<style>
+    body {
+        background-color: #ffffff;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- /.row -->
+    <div class="row">
+        <div style="margin-bottom: 20px;">
+            {{foreach $tables as $table}}
+            <p>还原数据表  <code>{{$table}}</code>  ……  成功</p>
+            {{/foreach}}
+
+        </div>
+
+        <div class="progress">
+            <div id="processbar" class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                0%
+            </div>
+        </div>
+
+        <div class="panel-button text-center">
+
+            <a href="javascript:void(0);" class="btn btn-success js_restoreStatus disabled">还原中</a>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- /#wrapper -->
+
+
+<script>
+
+    function setProcess(){
+        var processbar = document.getElementById("processbar");
+        processbar.style.width = parseInt(processbar.style.width) + 5 + "%";
+        processbar.innerHTML   = processbar.style.width;
+        if(processbar.style.width == "100%"){
+
+            $('.js_restoreStatus').text('还原成功，页面刷新中').removeClass('disabled');
+            window.setInterval(function(){
+                parent.location.reload();
+            },1000);
+            window.clearInterval(bartimer);
+        }
+    }
+
+    var bartimer = window.setInterval(function(){setProcess();},100);
+
+
+</script>
+{{include_file name='public/footer'}}

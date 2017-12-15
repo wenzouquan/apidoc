@@ -1,0 +1,174 @@
+{{include_file name='public/header' title='系统设置'}}
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    {{include_file name='public/nav' sidebar='sidebar'}}
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">系统设置</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <form role="form" id="js_settingForm" action="{{url('admin/setting')}}" method="post">
+                                    <div class="form-group">
+                                        <label>网站名称</label>
+                                        <input class="form-control" name="config[name]" value="{{$config['name']}}" placeholder="必填，至少2位" datatype="*2-250" nullmsg="请输入网站名称！">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>网站关键字</label>
+                                        <input class="form-control" name="config[keywords]" value="{{$config['keywords']}}" placeholder="" ignore="ignore" datatype="*">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>网站描述</label>
+                                        <textarea class="form-control" name="config[description]" rows="1" ignore="ignore" datatype="*" nullmsg="请输入版权信息！">{{$config['description']}}</textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>版权信息</label>
+                                        <input class="form-control" name="config[copyright]" value="{{$config['copyright']}}" placeholder="" ignore="ignore" datatype="*">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>系统邮箱</label>
+                                        <input class="form-control" name="config[email]" value="{{$config['email']}}" placeholder="必填" datatype="e" nullmsg="请输入系统邮箱！" errormsg="请输入合法邮箱">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>注册口令 <a data-toggle="tooltip" data-placement="right" title="" class="btn-show-tips" data-original-title="如果不填写注册口令，那么注册页面不会有输入注册口令项">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a></label>
+                                        <input class="form-control" name="config[register_token]" value="{{$config['register_token']}}" placeholder="非必填，4-10个字符，区分大小写" value="123456" ignore="ignore" datatype="*4-10" nullmsg="请输入注册口令！" errormsg="至少6位">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>重置默认密码</label>
+                                        <input class="form-control" name="config[default_password]" value="{{$config['default_password']}}" placeholder="必填，6-20个英文字母、数字或下划线组成的字符" value="123456" datatype="*6-20" nullmsg="请输入重置默认密码！" errormsg="至少6位">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="control-label">注册验证码 <a data-toggle="tooltip" data-placement="right" title="" class="btn-show-tips" data-original-title="开启后必须输入正确验证码才能注册">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a></label>
+                                        <div class="form-group">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="config[register_captcha]" {{if $config['register_captcha'] == 1}}checked{{/if}} value=1 > 开启
+                                            </label>
+
+                                            <label class="radio-inline">
+                                                <input type="radio" name="config[register_captcha]" {{if $config['register_captcha'] == 0}}checked{{/if}} value=0> 关闭
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="control-label">登录验证码 <a data-toggle="tooltip" data-placement="right" title="" class="btn-show-tips" data-original-title="开启后必须输入正确验证码才能登录">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a></label>
+                                        <div class="form-group">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="config[login_captcha]" {{if $config['login_captcha'] == 1}}checked{{/if}} value=1 > 开启
+                                            </label>
+
+                                            <label class="radio-inline">
+                                                <input type="radio" name="config[login_captcha]" {{if $config['login_captcha'] == 0}}checked{{/if}} value=0> 关闭
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="control-label">推送消息 <a data-toggle="tooltip" data-placement="right" title="" class="btn-show-tips" data-original-title="开启后会在指定时间间隔内推送项目加入申请和申请结果，关闭后只有在刷新页面时才会推送消息">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a></label>
+                                        <div class="form-group">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="config[is_push]" {{if $config['is_push'] == 1}}checked{{/if}} value=1 > 开启
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="config[is_push]" {{if $config['is_push'] == 0}}checked{{/if}} value=0> 关闭
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group js_pushTime hidden">
+                                        <label>推送间隔(单位秒)</label>
+                                        <input class="form-control" name="config[push_time]" value="{{$config['push_time']|default:3}}" placeholder="单位秒" value="3" datatype="n">
+                                    </div>
+
+                                    <button type="reset" class="btn btn-default">重置</button>
+                                    <button type="button" class="btn btn-primary js_submit">提交</button>
+
+                                </form>
+
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <hr>
+    <p class="text-center">{{get_config('copyright')}}</p>
+    <!-- /#wrapper -->
+    <script>
+
+        //展示推送间隔信息
+        var pushTimeShow = function(){
+            var isPush = $("input[name='config[is_push]']:checked").val();
+
+            if(isPush == 1){
+
+                $(".js_pushTime").removeClass("hidden");
+                $(".js_pushTime input").attr("ignore",'');
+
+            }else{
+
+                $(".js_pushTime").addClass("hidden");
+                $(".js_pushTime input").attr("ignore",'ignore');
+
+            }
+        }
+
+        pushTimeShow();
+
+        // 选择不时时推送时
+        $("input[name='config[is_push]']").click(function(){
+            pushTimeShow();
+        });
+
+        $(function(){
+            //表单合法性验证
+            $("#js_settingForm").validateForm();
+
+        });
+    </script>
+
+
+    {{include_file name='public/footer'}}

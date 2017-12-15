@@ -1,0 +1,113 @@
+{{include_file name='public/header' title='用户注册'}}
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center">用户注册</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" id="js_regForm" action="{{url('register')}}" method="post">
+
+                            <fieldset>
+                                <div class="form-group">
+                                    <input id="auto-complete-email" class="form-control" placeholder="登录邮箱，必填" name="email" type="text" datatype="e" nullmsg="请输入登录邮箱！" errormsg="请输入合法的邮箱地址" >
+<!--                                    <span class="Validform_checktip"></span>-->
+                                </div>
+
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="用户昵称，必填，建议写真实姓名以方便识别" name="name" type="text" datatype="*2-10" nullmsg="请输入用户昵称！" errormsg="请输入2-10个由字母或汉字组成的字符">
+<!--                                    <span class="Validform_checktip"></span>-->
+                                </div>
+
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="登录密码，不少于6位" name="password" type="password"  datatype="*6-20" nullmsg="请输入登录密码！" errormsg="请填写6-20个字符">
+<!--                                    <span class="Validform_checktip"></span>-->
+                                </div>
+
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="确认密码" name="repassword" type="password"  datatype="*6-20" recheck="password" nullmsg="请输入重复密码！" errormsg="重复密码与密码不一致">
+<!--                                    <span class="Validform_checktip"></span>-->
+                                </div>
+                                {{if $register_token}}
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="注册口令，必填，区分大小写" name="token" type="text"  datatype="*">
+                                    <!--                                    <span class="Validform_checktip"></span>-->
+                                </div>
+                                {{/if}}
+
+                                {{if $register_captcha}}
+                                <div class="form-group">
+                                    <div class="input-group">
+
+                                        <input type="text" name="code" class="form-control" datatype="*" nullmsg="请输入验证码！" placeholder="验证码，不区分大小写">
+
+                                        <a class="input-group-btn verify-code">
+
+                                           <img alt="点击刷新" title="点击刷新" onclick="reloadCode()" src="{{url('register/code')}}">
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+                                {{/if}}
+
+                                <!-- Change this to a button or input when using this as a form -->
+                                <a href="javascript:void(0);" class="btn btn-lg btn-success btn-block js_submit">快速注册</a>
+
+                                <hr>
+
+                                <a href="login.html" class="btn btn-default btn-block">已有账号，直接登录</a>
+
+
+
+
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p class="text-center">{{get_config('copyright')}}</p>
+    </div>
+
+    <script>
+
+        // 刷新验证码
+        var reloadCode = function() {
+
+            var img = $(".verify-code").find('img');
+
+            var src = img.attr("src").split('?');
+
+            img.attr("src", src[0]+'?random='+new Date().getTime());
+
+        }
+
+        $(function(){
+
+            //验证注册表单
+            $("#js_regForm").validateForm({
+                success:function () {
+                    window.location.href = "{{url('project/select')}}";
+                },
+                error:function () {
+                    reloadCode();
+                }
+            });
+
+            //enter回车登录
+            $('.js_regForm').enterSubmit();
+
+        })
+
+    </script>
+
+    {{include_file name='public/footer'}}

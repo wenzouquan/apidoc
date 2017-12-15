@@ -1,0 +1,103 @@
+
+{{include_file name='public/header' title='项目管理'}}
+<style>
+    body {
+        background-color: #ffffff;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- /.row -->
+    <div class="row">
+        <form id="js_addApiForm" role="form" action="{{url('api/add')}}" method="post">
+            <input type="hidden" class="form-control" name="api[id]" value="{{$api.id}}">
+            <input type="hidden" class="form-control" name="api[module_id]" value="{{$module.id}}">
+
+            <div class="form-group">
+                <label>所属模块</label>
+                <input class="form-control" value="{{$module.title}}" placeholder="必填" disabled>
+            </div>
+
+            <div class="form-group">
+                <label>接口名称</label>
+                <input class="form-control" name="api[title]" value="" placeholder="必填" datatype="*" nullmsg="请输入接口名称">
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">请求类型</label>
+                <div class="form-group">
+                    {{foreach \app\api::get_method_list() as $k => $method}}
+                    <label class="radio-inline">
+                        <input type="radio" name="api[method]" value="{{$method}}" {{if $method == 'POST'}}checked{{/if}}> {{$method}}
+                    </label>
+                    {{/foreach}}
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>接口路径</label>
+                <input class="form-control" name="api[uri]" placeholder="必填，不包含域名部分，rest参数请用{}，如/user/{id}" datatype="*2-250">
+            </div>
+
+
+            <div class="form-group">
+                <label>接口描述</label>
+                <textarea class="form-control" name="api[intro]" rows="2" placeholder="非必填"></textarea>
+                <span class="Validform_checktip"></span>
+            </div>
+
+            <input type="hidden" id="js_submit" value="提交">
+
+        </form>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#wrapper -->
+
+<script>
+
+    $(function(){
+
+        //验证表单
+        $("#js_addApiForm").validateForm({
+            submitBtn: '#js_submit',
+            before:function () {
+                // iframe父级提交按钮禁用
+                $('#js_addApiForm', parent.document).find(".js_submit").attr("disabled", "disabled").text('提交中..');
+            },
+            success:function () {
+                parent.location.reload();
+//                parent.$('#js_addApiModal').modal('hide');
+
+            },
+            error:function () {
+                // iframe父级提交按钮激活
+                $('#js_addApiForm', parent.document).find(".js_submit").text('重新提交').removeAttr("disabled");
+
+            }
+        });
+
+        $('.js_addUrlBtn').on('click', function () {
+            var inputObj = $(this).siblings('input');
+            var url = inputObj.val();
+            if(!url){
+                inputObj.focus();
+                alert('请输入合法的URL');
+            }else{
+                $(".input-group").after($(".input-group").clone());
+            }
+
+        });
+
+    });
+
+
+</script>
+
+{{include_file name='public/footer'}}

@@ -1,0 +1,121 @@
+
+{{include_file name='public/header' title='添加响应参数'}}
+<style>
+    body {
+        background-color: #ffffff;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- /.row -->
+    <div class="row">
+        <form id="js_addResponseFieldForm" role="form" action="{{url('field/add')}}" method="post">
+            <input type="hidden" class="form-control" name="field[id]" value="{{$field.id}}">
+            <input type="hidden" class="form-control" name="field[api_id]" value="{{$field.api_id}}">
+            <input type="hidden" class="form-control" name="field[parent_id]" value="{{$field.parent_id}}">
+            <input type="hidden" class="form-control" name="field[method]" value="2">
+            <input type="hidden" class="form-control" name="field[is_required]" value="0">
+
+            <div class="form-group">
+                <label>参数别名</label>
+                <input class="form-control" name="field[name]" value="{{$field.name}}" placeholder="必填，只能是数字和字母组合，且首位不能是数字" datatype="/[a-z|A-Z|0-9|\-|_|\.]$/" nullmsg="请输入接口名称">
+            </div>
+
+            <div class="form-group">
+                <label>参数含义</label>
+                <input class="form-control" name="field[title]" value="{{$field.title}}" placeholder="必填" datatype="*" nullmsg="请输入接口名称">
+            </div>
+
+            <div class="form-group">
+                <label>参数类型</label>
+                <select class="form-control" name="field[type]">
+                    {{foreach \app\field::get_type_list() as $k => $type}}
+                    <option value="{{$k}}"  {{if $field.type == $k}}selected{{/if}}>{{$type}}</option>
+                    {{/foreach}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>MOCK规则
+                    <a target="_blank" href="https://github.com/gouguoyin/phprap/wiki/Mock" data-toggle="tooltip" data-placement="right" title="" class="btn-show-tips" data-original-title="点击查看MOCK语法">
+                        <i class="fa fa-info-circle"></i>
+                    </a>
+                </label>
+                <input class="form-control js_selectMockRuleBtn" name="field[mock]" value="{{$field.mock}}" placeholder="非必填，如果要使用mock服务，必须填写" datatype="*" ignore="ignore">
+            </div>
+
+            <div class="form-group">
+                <label>备注说明</label>
+                <textarea class="form-control" name="field[intro]" rows="2" placeholder="非必填">{{$field.intro}}</textarea>
+            </div>
+
+            <input type="hidden" id="js_submit" value="提交">
+
+        </form>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#wrapper -->
+<script src="{{STATIC_URL}}/plugins/bootstrap/js/bootstrap3-typeahead.min.js"></script>
+
+<script>
+
+    $(function(){
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        //选择mock规则
+        var selectMemberBtn = $('.js_selectMockRuleBtn');
+        var localArrayData = {{$methods}};
+
+        selectMemberBtn.typeahead({
+            source: localArrayData,
+            items: 8, //显示8条
+            delay: 100, //延迟时间
+
+        });
+
+        //验证表单
+        var responseFieldModal = $(window.parent.document).find('#js_addResponseFieldModal');
+
+        //验证表单
+        $("#js_addResponseFieldForm").validateForm({
+            submitBtn: '#js_submit',
+            before:function () {
+                // iframe父级提交按钮禁用
+                responseFieldModal.find(".js_submit").attr("disabled", "disabled").text('提交中..');
+            },
+            success:function () {
+
+                // 重新载入响应参数列表
+                var apiId = "{{$field.api_id}}";
+                $('#js_addApiForm', parent.document).find(".panel-response").load("{{url('field/load')}}", {'method':2,'api_id':apiId});
+                // 重新载入响应示例json
+                $('#js_addApiForm', parent.document).find(".panel-json").load("{{url('field/json')}}", {'api_id':apiId}, function () {
+                    // 格式化json
+                    window.parent.jsonFormat();
+                    // 吐司提示
+                    //$(window.parent.document).contents().find('[data-toggle="tooltip"]').tooltip();
+                });
+                // 关闭父级模态框
+                responseFieldModal.find(".js_close").trigger('click');
+                responseFieldModal.find(".js_submit").text('提交').removeAttr("disabled");
+
+            },
+            error:function () {
+                // iframe父级提交按钮激活
+                responseFieldModal.find(".js_submit").text('重新提交').removeAttr("disabled");
+
+            }
+        });
+
+    });
+
+</script>
+
+{{include_file name='public/footer'}}
