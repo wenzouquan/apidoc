@@ -12,7 +12,7 @@ define('APP_PATH', ROOT_PATH . '/application');
 // 定义静态资源目录
 define('STATIC_URL', '/static');
 
-define('APP_DEBUG', false);
+define('APP_DEBUG', true);
 
 // 引入核心框架
 require ROOT_PATH . '/gophp/init.php';

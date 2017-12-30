@@ -98,7 +98,7 @@ class field {
 
         $field_id = isset($field_id) ? $field_id : 0;
 
-        $result = db('field')->show(false)->where('api_id', '=', $data['api_id'])->where('name', '=', $data['name'])->where('method', '=', $data['method'])->where('id', 'not in', [$field_id])->find();
+        $result = db('field')->show(false)->where('parent_id', '=', $data['parent_id'])->where('api_id', '=', $data['api_id'])->where('name', '=', $data['name'])->where('method', '=', $data['method'])->where('id', 'not in', [$field_id])->find();
 
         if($result){
 
@@ -230,9 +230,10 @@ class field {
             response::ajax(['code' => 304, 'msg' => '参数方法不能为空']);
 
         }
+        $parent_id =  intval($post['parent_id']);
 
         // 检测字段名称是否已存在
-        if(field::check_name(['api_id' => $api['id'], 'name' => $name, 'method' => $method], $field_id)){
+        if(field::check_name(['api_id' => $api['id'], 'name' => $name,'parent_id'=>$parent_id, 'method' => $method], $field_id)){
 
             response::ajax(['code' => 305, 'msg' => '该参数名称已存在']);
 

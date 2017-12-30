@@ -16,7 +16,10 @@ class mock2 extends controller {
     public function __construct()
     {
         try{
-             $data=db('doc_api')->where('uri', '=', 'get/list')->find();
+            //var_dump($_GET);
+            $uri = $_GET['uri'];
+           // var_dump($uri);
+            $data=db('api')->where('uri', '=', $uri)->find();
             $this->id = $data['id'];
             $api = api::get_api_info($this->id);
             if(!$api){

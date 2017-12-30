@@ -123,7 +123,7 @@ class mock extends controller {
         }
 
         $mock_data = field::get_mock_data($this->id);
-
+       
         response::ajax($mock_data);
 
     }
